@@ -1,0 +1,59 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.61'
+}
+
+
+group 'com.estsecurity.rx-study'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.3.0'
+    implementation 'io.reactivex:rxswing:0.24.0'
+
+    implementation "com.google.guava:guava:20.0"
+    implementation "net.jcip:jcip-annotations:1.0"
+    implementation "com.google.code.findbugs:jsr305:3.0.1"
+    implementation "net.jcip:jcip-annotations:1.0"
+    implementation "com.google.code.findbugs:jsr305:3.0.1"
+    implementation "org.apache.commons:commons-lang3:3.5"
+    implementation "org.swinglabs.swingx:swingx-all:1.6.5-1"
+
+    implementation "io.reactivex:rxjava:1.2.3"
+
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
+    testImplementation "org.codehaus.groovy:groovy-all:2.4.7"
+    testImplementation("org.spockframework:spock-core:1.0-groovy-2.4") {
+        exclude group: 'org.codehaus.groovy'
+    }
+    testImplementation("cglib:cglib:3.2.4")  // spock mocks
+    testImplementation "com.jayway.awaitility:awaitility:1.7.0"
+}
+
+def fileEncoding = 'UTF-8'
+
+test {
+    systemProperty 'file.encoding', fileEncoding
+}
+tasks.withType(JavaCompile) {
+    options.encoding = fileEncoding
+}
+tasks.withType(Test) {
+    maxParallelForks = Runtime.getRuntime().availableProcessors()
+}
+
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
