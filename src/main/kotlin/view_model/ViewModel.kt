@@ -9,36 +9,40 @@ import rx.subjects.PublishSubject
 import java.awt.event.KeyEvent
 
 
-
-
 @ThreadSafe
 class ViewModel : IViewModel<Model> {
 
-    val wordEvent = BehaviorSubject.create<String>()!!
+    val wordEvent = BehaviorSubject.create<String>()
     val enterEvents = PublishSubject.create<KeyEvent>()
-    val inputWord = BehaviorSubject.create<String>()
+    val inputTextEvents = BehaviorSubject.create<String>()
+    val inputClearEvents = BehaviorSubject.create<String>()
+    val correctEvents = BehaviorSubject.create<String>()
+    val correntCountEvents = BehaviorSubject.create<String>()
 
 
     init {
         wireInternally()
+        correntCountEvents.onNext("0")
     }
 
     private fun wireInternally() {
-        enterEvents.filter { it.keyCode == KeyEvent.VK_ENTER }
+        enterEvents.filter { it.keyCode == KeyEvent.VK_ENTER && it.id == KeyEvent.KEY_PRESSED }
                 .subscribe {
-                    println(inputWord.value)
+
+                    if(inputTextEvents.value == wordEvent.value){
+                        correctEvents.onNext(wordEvent.value)
+                        correntCountEvents.onNext(correctEvents.values.size.toString()+"\t")
+                    }
+
+                    println(inputTextEvents.value)
+                    inputClearEvents.onNext("")
                 }
     }
 
     override fun connectTo(model: Model) {
-        when (model) {
-            is Model.WordModel -> {
-                model.words().subscribe(this.wordEvent)
-            }
-            is Model.InputModel -> {
+        model.words().subscribe(this.wordEvent)
 
-            }
-        }
+
     }
 
 }

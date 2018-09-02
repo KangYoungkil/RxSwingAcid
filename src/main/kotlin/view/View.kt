@@ -1,40 +1,35 @@
 package view
 
 
-import javafx.scene.input.KeyCode
 import widgets.StrictThreadingJLabel
 import java.awt.*;
 import java.lang.management.ManagementFactory;
 import java.awt.BorderLayout
 import javax.swing.SwingConstants
 import widgets.StrictThreadingJFrame
-import mvvm.RxViewModel2SwingViewBinder.bindViewModelString
 import mvvm.IView
 import mvvm.RxSwingView2ViewModelBinder.bindSwingView
 import mvvm.RxSwingView2ViewModelBinder.bindSwingViewKeyEvent
-import mvvm.RxViewModel2SwingViewBinder.bindViewModel
-import rx.Observable
-import rx.Observer
-import rx.swing.sources.KeyEventSource
+import mvvm.RxViewModel2SwingViewBinder.*
 import view_model.ViewModel
 import widgets.StrictThreadingJTextField
-import java.awt.event.KeyEvent
-import java.awt.event.KeyListener
 
 
 internal class View : StrictThreadingJFrame(), IView<ViewModel> {
 
     private val label: StrictThreadingJLabel
-    val input: StrictThreadingJTextField
+    val inputTextFeild: StrictThreadingJTextField
     private val pointLabel: StrictThreadingJLabel
 
-    val WIDTH = 1280
-    val HEIGHT = 720
+    val WIDTH = 640
+    val HEIGHT = 360
 
     override fun bind(viewModel: ViewModel) {
         bindViewModelString(viewModel.wordEvent).toSwingViewLabel(label)
-        bindSwingViewKeyEvent(input).toViewModel(viewModel.enterEvents)
-        bindSwingView(input).toViewModel(viewModel.inputWord)
+        bindSwingViewKeyEvent(inputTextFeild).toViewModel(viewModel.enterEvents)
+        bindSwingView(inputTextFeild).toViewModel(viewModel.inputTextEvents)
+        bindViewModelString(viewModel.inputClearEvents).toSwingViewText(inputTextFeild)
+        bindViewModelString(viewModel.correntCountEvents).toSwingViewLabel(pointLabel)
     }
 
     init {
@@ -48,19 +43,31 @@ internal class View : StrictThreadingJFrame(), IView<ViewModel> {
 
         label = StrictThreadingJLabel()
         label.foreground = Color.BLUE
-        label.font = Font("Serif", Font.BOLD, 20)
-        label.horizontalAlignment = SwingConstants.CENTER
-        contentPane.add(label, BorderLayout.CENTER)
+        label.font = Font("Serif", Font.BOLD, 13)
+
+        val gridLayout = GridLayout(10,5,0,0)
+        val gridContainer = Container()
+        gridContainer.layout = gridLayout
+
+
+        gridContainer.add(label,0)
+        for (x in 1..38)
+        gridContainer.add(StrictThreadingJLabel(x.toString()))
+
+
+        contentPane.add(gridContainer,BorderLayout.CENTER)
+
 
         pointLabel = StrictThreadingJLabel()
         pointLabel.foreground = Color.RED
+        pointLabel.horizontalAlignment = SwingConstants.RIGHT
         pointLabel.font = Font("Serif", Font.BOLD, 15)
 
         contentPane.add(pointLabel, BorderLayout.NORTH)
-        label.text = "10"
+        pointLabel.text = "10"
 
-        input = StrictThreadingJTextField()
-        contentPane.add(input, BorderLayout.SOUTH)
+        inputTextFeild = StrictThreadingJTextField()
+        contentPane.add(inputTextFeild, BorderLayout.SOUTH)
 
     }
 }

@@ -40,8 +40,8 @@ public class RxSwingView2ViewModelBinder {
         return new BindOfAble<>(SwingObservable.fromDocumentEvents(source.getDocument())
                 .map(documentEvent1 -> source.getText()));
     }
-    public static BindOfAble<KeyEvent> bindSwingViewKeyEvent(JTextField source) {
-        return new BindOfAble<>(KeyEventSource.fromKeyEventsOf(source));
+    public static BindOfAble<KeyEvent> bindSwingViewKeyEvent(JTextComponent source) {
+        return new BindOfAble<>(SwingObservable.fromKeyEvents(source));
     }
 
     public static BindOfAble<Integer> bindSwingView(JTextComponent source, AbstractButton sourceEventTrigger) {

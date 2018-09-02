@@ -11,7 +11,7 @@ fun main(args: Array<String>) {
     SysOutUtils.sysout(ManagementFactory.getRuntimeMXBean().name)
     UncaughtExceptionHandlerInitializer.initUncaughtExceptionHandler()
 
-    val wordModel = Model.WordModel
+    val wordModel = Model()
     val viewModel = ViewModel()
     viewModel.connectTo(wordModel)
 

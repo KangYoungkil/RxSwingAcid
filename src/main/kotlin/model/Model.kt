@@ -6,25 +6,17 @@ import java.io.File
 
 import java.util.concurrent.TimeUnit
 
-sealed class Model {
-    object WordModel : Model() {
-        val file = File(javaClass.getResource("/dictionary.txt").toURI())
-        private val words: List<String>
+class  Model {
+    val file = File(javaClass.getResource("/dictionary.txt").toURI())
+    private val words: List<String>
+    private val INTERVAL_TIME: Long = 5 // seconds
 
-        init {
-            words = file.readLines(Charsets.UTF_8)
-        }
-        private const val INTERVAL_TIME: Long = 1 // seconds
-        fun words(): Observable<String> {
-            val texts = Observable.just(words).flatMapIterable { it -> it }.repeat()
-            val trigger = Observable.interval(INTERVAL_TIME, TimeUnit.SECONDS)
-            return Observable.zip(texts, trigger) { text, _ -> text }.doOnNext { text -> SysOutUtils.sysout("Sending: $text") }
-        }
+    init {
+        words = file.readLines(Charsets.UTF_8)
     }
-
-    object InputModel : Model() {
-
+    fun words(): Observable<String> {
+        val texts = Observable.just(words.shuffled()).flatMapIterable { it -> it }.filter{it->it.length>2}.repeat()
+        val trigger = Observable.interval(INTERVAL_TIME, TimeUnit.SECONDS)
+        return Observable.zip(texts, trigger) { text, _ -> text  }.doOnNext { text -> SysOutUtils.sysout("Sending: $text") }
     }
-
-
 }
