@@ -1,6 +1,8 @@
 package model
 
 import rx.Observable
+import rx.Scheduler
+import rx.schedulers.Schedulers
 import utils.SysOutUtils
 import java.io.File
 
@@ -17,6 +19,6 @@ class  Model {
     fun words(): Observable<String> {
         val texts = Observable.just(words.shuffled()).flatMapIterable { it -> it }.filter{it->it.length>2}.repeat()
         val trigger = Observable.interval(INTERVAL_TIME, TimeUnit.SECONDS)
-        return Observable.zip(texts, trigger) { text, _ -> text  }.doOnNext { text -> SysOutUtils.sysout("Sending: $text") }
+        return Observable.zip(texts, trigger) { text, _ -> text  }.doOnNext { text -> SysOutUtils.sysout("Sending: $text") }.observeOn(Schedulers.io())
     }
 }
